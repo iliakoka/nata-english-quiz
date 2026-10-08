@@ -1,5 +1,10 @@
 <section class="card quiz">
-  <p class="hint">{{ title() }}</p>
+  <div class="topbar">
+    <span class="badge">🔗 {{ matched().length }}/{{ left().length }}</span>
+    <span class="counter">{{ title() }}</span>
+    <span class="badge fire" [class.hot]="mistakes() === 0 && matched().length > 2">✨ {{ left().length - mistakes() }}</span>
+  </div>
+  <div class="progress"><span [style.width.%]="progress()"></span></div>
   <p class="feedback-line" aria-live="polite">{{ message() }}</p>
 
   <div class="match-grid">

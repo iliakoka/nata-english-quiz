@@ -1,6 +1,10 @@
 <section class="card quiz">
+  <div class="topbar">
+    <span class="badge">⭐ {{ score() }}</span>
+    <span class="counter">{{ index() + 1 }} / {{ questions().length }}</span>
+    <span class="badge fire" [class.hot]="streak() >= 2">🔥 {{ streak() }}</span>
+  </div>
   <div class="progress"><span [style.width.%]="progress()"></span></div>
-  <p class="counter">Question {{ index() + 1 }} / {{ questions().length }}</p>
 
   <p class="hint">{{ current().hint }}</p>
   <h2 class="prompt" [class.ka]="current().kind === 'typing' || (current().kind === 'choice' && !current().toGeorgian)" [class.sentence]="current().kind === 'sentence'">

@@ -32,6 +32,7 @@ export class MultipleChoice implements OnInit {
   protected readonly index = signal(0);
   protected readonly picked = signal<string | null>(null);
   protected readonly score = signal(0);
+  protected readonly streak = signal(0);
   protected readonly message = signal('');
   protected typed = signal('');
   protected readonly current = computed(() => this.questions()[this.index()]);
@@ -94,6 +95,7 @@ export class MultipleChoice implements OnInit {
     this.picked.set(option);
     this.message.set(shuffle(correct ? PRAISE : ENCOURAGE)[0]);
     if (correct) this.score.update((x) => x + 1);
+    this.streak.update((s) => (correct ? s + 1 : 0));
     this.clarity.track(correct ? 'answer_correct' : 'answer_wrong', {
       quiz_mode: q.kind === 'choice' ? 'multiple_choice' : q.kind,
       direction: q.kind === 'choice' ? (q.toGeorgian ? 'en_to_ka' : 'ka_to_en') : q.kind,

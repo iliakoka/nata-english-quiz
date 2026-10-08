@@ -21,6 +21,9 @@ export class Matching implements OnInit {
   protected readonly mistakes = signal(0);
   protected readonly message = signal('');
   protected readonly allDone = computed(() => this.matched().length === this.left().length);
+  protected readonly progress = computed(() =>
+    this.left().length ? (this.matched().length / this.left().length) * 100 : 0,
+  );
   private readonly missed = new Set<string>();
 
   constructor(private clarity: ClarityService) {}
