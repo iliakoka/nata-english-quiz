@@ -158,7 +158,34 @@ h1, h2, .btn, .chip, .badge, .counter { font-family: var(--heading); }
     box-shadow: inset 0 3px 6px rgba(120, 80, 160, 0.08);
     &:focus { border-color: var(--lilac); box-shadow: 0 0 0 5px rgba(183, 157, 240, 0.25); }
     &.correct { background: var(--mint); border-color: var(--mint-deep); }
-    &.wrong { background: #ffe0e0; border-color: #e57373; } } }
+    &.wrong { background: #ffe0e0; border-color: #e57373; } }
+
+  .typed-live-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--butter);
+    border: 2px solid #f2dd8a;
+    font-size: 1.1rem;
+    animation: pop 0.25s ease-out;
+
+    .preview-label {
+      opacity: 0.65;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .preview-text {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--rose-deep);
+      letter-spacing: 0.05em;
+    }
+  }
+}
 
 /* Feedback */
 .feedback { margin-top: 20px; font-weight: 800; font-size: 1.1rem; position: relative; animation: rise 0.35s both;

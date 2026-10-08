@@ -15,11 +15,11 @@
   </h2>
 
   @if (current().kind === 'typing') {
-    <form class="typing" (submit)="$event.preventDefault(); submitTyped()">
+    <form class="typing" (submit)="$event.preventDefault(); submitTyped()" data-clarity-unmask="true">
       <input
         type="text"
         name="answer"
-        data-clarity-unmask="True"
+        data-clarity-unmask="true"
         autocomplete="off"
         autocapitalize="off"
         autocorrect="off"
@@ -31,11 +31,20 @@
         [class.correct]="picked() !== null && isRight()"
         [class.wrong]="picked() !== null && !isRight()"
       />
+
+      @if (typed()) {
+        <div class="typed-live-preview" data-clarity-unmask="true">
+          <span class="preview-label">Typing:</span>
+          <strong class="preview-text">{{ typed() }}</strong>
+        </div>
+      }
+
       @if (picked() === null) {
         <button
           type="submit"
           class="btn"
           data-quiz-mode="typing"
+          data-clarity-unmask="true"
           [attr.data-question-word]="current().word?.en"
           [attr.data-answer-selected]="typed()"
         >
