@@ -63,6 +63,9 @@
   @if (picked() !== null) {
     <div class="feedback" [class.good]="isRight()" aria-live="polite">
       <p>{{ message() }}</p>
+      @if (current().kind === 'typing') {
+        <p class="answer-reveal" data-clarity-unmask="True">You wrote: <strong>{{ picked() }}</strong></p>
+      }
       @if (!isRight()) {
         <p class="answer-reveal">Answer: <strong>{{ current().answer }}</strong></p>
       }
