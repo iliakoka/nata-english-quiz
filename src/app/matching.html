@@ -1,0 +1,51 @@
+<section class="card quiz">
+  <p class="hint">{{ title() }}</p>
+  <p class="feedback-line" aria-live="polite">{{ message() }}</p>
+
+  <div class="match-grid">
+    <div class="col">
+      @for (p of left(); track p.key) {
+        <button
+          type="button"
+          class="tile"
+          [class.selected]="selected() === p.key"
+          [class.matched]="matched().includes(p.key)"
+          [disabled]="matched().includes(p.key)"
+          data-quiz-mode="matching"
+          [attr.data-answer-selected]="p.left"
+          (click)="pickLeft(p)"
+        >
+          {{ p.left }}
+        </button>
+      }
+    </div>
+    <div class="col">
+      @for (p of right(); track p.key) {
+        <button
+          type="button"
+          class="tile"
+          [class.ka]="kind() === 'words'"
+          [class.matched]="matched().includes(p.key)"
+          [class.shake]="shaking() === p.key"
+          [disabled]="matched().includes(p.key) || !selected()"
+          data-quiz-mode="matching"
+          [attr.data-answer-selected]="p.right"
+          (click)="pickRight(p)"
+        >
+          {{ p.right }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (allDone()) {
+    <div class="feedback good">
+      <div class="confetti" aria-hidden="true">
+        @for (s of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; track s) {
+          <i [style.--i]="s">{{ ['💖', '✨', '🌸', '⭐'][s % 4] }}</i>
+        }
+      </div>
+      <button type="button" class="btn" (click)="finish()">Continue 🎀</button>
+    </div>
+  }
+</section>

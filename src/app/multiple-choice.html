@@ -1,0 +1,80 @@
+<section class="card quiz">
+  <div class="progress"><span [style.width.%]="progress()"></span></div>
+  <p class="counter">Question {{ index() + 1 }} / {{ questions().length }}</p>
+
+  <p class="hint">{{ current().hint }}</p>
+  <h2 class="prompt" [class.ka]="current().kind === 'typing' || (current().kind === 'choice' && !current().toGeorgian)" [class.sentence]="current().kind === 'sentence'">
+    @if (picked() !== null && current().word) {
+      <span class="emoji">{{ current().word!.emoji }}</span>
+    }
+    {{ current().prompt }}
+  </h2>
+
+  @if (current().kind === 'typing') {
+    <form class="typing" (submit)="$event.preventDefault(); submitTyped()">
+      <input
+        type="text"
+        name="answer"
+        autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
+        placeholder="Type here..."
+        [value]="typed()"
+        (input)="typed.set($any($event.target).value)"
+        [disabled]="picked() !== null"
+        [class.correct]="picked() !== null && isRight()"
+        [class.wrong]="picked() !== null && !isRight()"
+      />
+      @if (picked() === null) {
+        <button
+          type="submit"
+          class="btn"
+          data-quiz-mode="typing"
+          [attr.data-question-word]="current().word?.en"
+          [attr.data-answer-selected]="typed()"
+        >
+          Check ✓
+        </button>
+      }
+    </form>
+  } @else {
+    <div class="options">
+      @for (opt of current().options; track opt) {
+        <button
+          type="button"
+          class="option"
+          [class]="'option ' + state(opt)"
+          [class.ka]="current().kind === 'choice' && current().toGeorgian"
+          [disabled]="picked() !== null"
+          [attr.data-quiz-mode]="current().kind === 'choice' ? 'multiple_choice' : 'sentence'"
+          [attr.data-question-word]="current().word?.en ?? current().prompt"
+          [attr.data-answer-selected]="opt"
+          [attr.data-answer-correct]="opt === current().answer"
+          (click)="choose(opt)"
+        >
+          {{ opt }}
+        </button>
+      }
+    </div>
+  }
+
+  @if (picked() !== null) {
+    <div class="feedback" [class.good]="isRight()" aria-live="polite">
+      <p>{{ message() }}</p>
+      @if (!isRight()) {
+        <p class="answer-reveal">Answer: <strong>{{ current().answer }}</strong></p>
+      }
+      @if (isRight()) {
+        <div class="confetti" aria-hidden="true">
+          @for (s of sparks; track s) {
+            <i [style.--i]="s">{{ ['💖', '✨', '🌸', '⭐'][s % 4] }}</i>
+          }
+        </div>
+      }
+      <button type="button" class="btn" (click)="next()">
+        {{ index() + 1 >= questions().length ? 'See my result 🎀' : 'Next ➜' }}
+      </button>
+    </div>
+  }
+</section>
