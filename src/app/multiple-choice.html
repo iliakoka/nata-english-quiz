@@ -1,13 +1,37 @@
-<section class="card quiz">
+<section class="card cyber-card quiz-view">
   <div class="topbar">
-    <span class="badge">⭐ {{ score() }}</span>
-    <span class="counter">{{ index() + 1 }} / {{ questions().length }}</span>
-    <span class="badge fire" [class.hot]="streak() >= 2">🔥 {{ streak() }}</span>
+    <span class="badge xp-badge">⚡ {{ score() * 100 }} XP</span>
+    <span class="counter mission-pill">STAGE {{ index() + 1 }}/{{ questions().length }}</span>
+    <span class="badge combo-badge" [class.hot]="streak() >= 2">
+      🔥 {{ streak() >= 2 ? 'COMBO x' + streak() : streak() }}
+    </span>
   </div>
-  <div class="progress"><span [style.width.%]="progress()"></span></div>
+
+  <div class="progress cyber-progress">
+    <span [style.width.%]="progress()"></span>
+  </div>
+
+  <div class="mission-type-tag">
+    @switch (current().kind) {
+      @case ('choice') {
+        <span>{{ current().toGeorgian ? 'TRANSLATION: EN ➔ KA' : 'TRANSLATION: KA ➔ EN' }}</span>
+      }
+      @case ('sentence') {
+        <span>GRAMMAR & SENTENCE MATRIX</span>
+      }
+      @case ('typing') {
+        <span>CYBER TYPING CHALLENGE</span>
+      }
+    }
+  </div>
 
   <p class="hint">{{ current().hint }}</p>
-  <h2 class="prompt" [class.ka]="current().kind === 'typing' || (current().kind === 'choice' && !current().toGeorgian)" [class.sentence]="current().kind === 'sentence'">
+
+  <h2
+    class="prompt"
+    [class.ka]="current().kind === 'typing' || (current().kind === 'choice' && !current().toGeorgian)"
+    [class.sentence]="current().kind === 'sentence'"
+  >
     @if (picked() !== null && current().word) {
       <span class="emoji">{{ current().word!.emoji }}</span>
     }
@@ -16,25 +40,27 @@
 
   @if (current().kind === 'typing') {
     <form class="typing" (submit)="$event.preventDefault(); submitTyped()" data-clarity-unmask="true">
-      <input
-        type="text"
-        name="answer"
-        data-clarity-unmask="true"
-        autocomplete="off"
-        autocapitalize="off"
-        autocorrect="off"
-        spellcheck="false"
-        placeholder="Type here..."
-        [value]="typed()"
-        (input)="typed.set($any($event.target).value)"
-        [disabled]="picked() !== null"
-        [class.correct]="picked() !== null && isRight()"
-        [class.wrong]="picked() !== null && !isRight()"
-      />
+      <div class="input-glow-wrapper">
+        <input
+          type="text"
+          name="answer"
+          data-clarity-unmask="true"
+          autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          placeholder="Type English word here..."
+          [value]="typed()"
+          (input)="typed.set($any($event.target).value)"
+          [disabled]="picked() !== null"
+          [class.correct]="picked() !== null && isRight()"
+          [class.wrong]="picked() !== null && !isRight()"
+        />
+      </div>
 
       @if (typed()) {
         <div class="typed-live-preview" data-clarity-unmask="true">
-          <span class="preview-label">Typing:</span>
+          <span class="preview-label">LIVE TYPING:</span>
           <strong class="preview-text">{{ typed() }}</strong>
         </div>
       }
@@ -42,23 +68,23 @@
       @if (picked() === null) {
         <button
           type="submit"
-          class="btn"
+          class="btn-action"
           data-quiz-mode="typing"
           data-clarity-unmask="true"
           [attr.data-question-word]="current().word?.en"
           [attr.data-answer-selected]="typed()"
         >
-          Check ✓
+          CONFIRM ANSWER ⚡
         </button>
       }
     </form>
   } @else {
-    <div class="options">
+    <div class="options cyber-options">
       @for (opt of current().options; track opt) {
         <button
           type="button"
-          class="option"
-          [class]="'option ' + state(opt)"
+          class="option cyber-opt"
+          [class]="'option cyber-opt ' + state(opt)"
           [class.ka]="current().kind === 'choice' && current().toGeorgian"
           [disabled]="picked() !== null"
           [attr.data-quiz-mode]="current().kind === 'choice' ? 'multiple_choice' : 'sentence'"
@@ -67,30 +93,37 @@
           [attr.data-answer-correct]="opt === current().answer"
           (click)="choose(opt)"
         >
-          {{ opt }}
+          <span class="opt-prefix">{{ ['A', 'B', 'C', 'D'][$index] }}</span>
+          <span class="opt-content">{{ opt }}</span>
         </button>
       }
     </div>
   }
 
   @if (picked() !== null) {
-    <div class="feedback" [class.good]="isRight()" aria-live="polite">
-      <p>{{ message() }}</p>
+    <div class="feedback cyber-feedback" [class.good]="isRight()" aria-live="polite">
+      <div class="feedback-status">
+        <span class="feedback-icon">{{ isRight() ? '⚡' : '🛡️' }}</span>
+        <p class="feedback-msg">{{ message() }}</p>
+      </div>
+
       @if (current().kind === 'typing') {
         <p class="answer-reveal" data-clarity-unmask="True">You wrote: <strong>{{ picked() }}</strong></p>
       }
       @if (!isRight()) {
-        <p class="answer-reveal">Answer: <strong>{{ current().answer }}</strong></p>
+        <p class="answer-reveal correct-reveal">Correct answer: <strong>{{ current().answer }}</strong></p>
       }
+
       @if (isRight()) {
         <div class="confetti" aria-hidden="true">
           @for (s of sparks; track s) {
-            <i [style.--i]="s">{{ ['💖', '✨', '🌸', '⭐'][s % 4] }}</i>
+            <i [style.--i]="s">{{ ['⚡', '✨', '💎', '🔥', '⭐'][s % 5] }}</i>
           }
         </div>
       }
-      <button type="button" class="btn" (click)="next()">
-        {{ index() + 1 >= questions().length ? 'See my result 🎀' : 'Next ➜' }}
+
+      <button type="button" class="btn-action next-btn" (click)="next()">
+        {{ index() + 1 >= questions().length ? 'FINISH MISSION 🏆' : 'NEXT STAGE ➜' }}
       </button>
     </div>
   }

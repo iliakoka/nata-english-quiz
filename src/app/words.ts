@@ -100,16 +100,16 @@ export function shuffle<T>(items: T[]): T[] {
 }
 
 export const PRAISE = [
-  'Perfect, Nata! 🌟',
-  'Amazing! 💖',
-  'You got it! 🎉',
-  'Brilliant! ✨',
-  'So smart! 🌸',
-  'Yay, correct! 🥳',
+  'BOOM! Perfect, Nata! ⚡',
+  'UNSTOPPABLE! 🚀',
+  'CRITICAL HIT! 🔥',
+  'GALAXY BRAIN! 🧠✨',
+  'LEGENDARY! 👑',
+  'COMBO MASTER! 🎯',
 ];
 
 export const ENCOURAGE = [
-  'Almost! You are learning 💛',
-  'Good try, Nata! Next one 🌷',
-  'No worries, mistakes help us grow 🌱',
+  'Shields holding! Next one is yours 🛡️',
+  'Nice try, Nata! Recharge & fire ⚡',
+  'Mistakes power up your XP! Keep going 🚀',
 ];

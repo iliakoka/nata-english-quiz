@@ -1,47 +1,139 @@
-<div class="bg" aria-hidden="true">
-  @for (f of ['🌸', '💖', '✨', '🌷', '⭐', '🦋', '🌼', '💫', '🌸', '✨']; track $index) {
-    <span [style.--n]="$index">{{ f }}</span>
+<div class="cyber-bg" aria-hidden="true">
+  <div class="grid-layer"></div>
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  @for (s of ['⚡', '🛸', '🚀', '👾', '⭐', '💎', '👑', '✨', '🔥', '🎯']; track $index) {
+    <span class="floating-item" [style.--n]="$index">{{ s }}</span>
   }
 </div>
+
+<header class="hud-header">
+  <div class="hud-stat xp-pill">
+    <span class="hud-icon">⚡</span>
+    <span class="hud-label">{{ totalXp() }} XP</span>
+  </div>
+  @if (bestScore() > 0) {
+    <div class="hud-stat best-pill">
+      <span class="hud-icon">🏆</span>
+      <span class="hud-label">Best: {{ bestScore() }}%</span>
+    </div>
+  }
+  <button
+    type="button"
+    class="hud-btn sound-btn"
+    (click)="sound.toggle()"
+    [attr.aria-label]="sound.enabled() ? 'Mute sound' : 'Unmute sound'"
+  >
+    {{ sound.enabled() ? '🔊' : '🔇' }}
+  </button>
+</header>
+
 <main class="shell">
   @switch (stage()) {
     @case ('welcome') {
-      <section class="card welcome ka">
-        <div class="blob" aria-hidden="true">🌸</div>
-        <h1>გამარჯობა ნატა,<br>დავიწყოთ!</h1>
-        <p class="sub">პატარა ინგლისურის QUIZ, სპეციალურად შენთვის 💖</p>
-        <button type="button" class="btn big" data-quiz-action="start" (click)="start('mix')">
-          დავიწყოთ ✨
-        </button>
-        <div class="modes">
-          <button type="button" class="chip" data-quiz-action="start-mc" (click)="start('mc')">
-            სწორი პასუხის არჩევა
+      <section class="card cyber-card welcome ka">
+        <div class="mascot-wrapper">
+          <div class="speech-bubble">
+            <span>{{ mascotQuote() }}</span>
+          </div>
+          <button
+            type="button"
+            class="mascot-pod"
+            [class.bop]="mascotBopping()"
+            (click)="tapMascot()"
+            title="Tap for boost!"
+          >
+            <span class="mascot-art">👾</span>
+            <span class="mascot-pulse"></span>
           </button>
-          <button type="button" class="chip" data-quiz-action="start-match" (click)="start('match')">
-            დაწყვილება
+          <span class="mascot-hint">დააკლიკე ბუსტისთვის! ⚡</span>
+        </div>
+
+        <h1 class="hero-title">
+          გამარჯობა ნატა! ⚡<br>
+          <span class="cyber-gradient">CYBER QUEST</span>
+        </h1>
+        <p class="sub">ახალი რთული დონეები, კომბოები და ჯილდოები 🎮</p>
+
+        <button type="button" class="btn-hero" data-quiz-action="start" (click)="start('mix')">
+          <span class="btn-glow"></span>
+          <span class="btn-inner">
+            <span class="btn-emoji">🚀</span>
+            <span class="btn-text-group">
+              <span class="btn-main">დავიწყოთ მისია!</span>
+              <span class="btn-sub">FULL ADVENTURE • 3 ROUNDS</span>
+            </span>
+          </span>
+        </button>
+
+        <div class="modes-grid">
+          <button type="button" class="mode-card" data-quiz-action="start-mc" (click)="start('mc')">
+            <div class="mode-icon-box">⚡</div>
+            <div class="mode-info">
+              <strong class="mode-name">სწორი პასუხის არჩევა</strong>
+              <span class="mode-sub">15 შეკითხვა • გრამატიკა & აკრეფა</span>
+            </div>
+            <span class="mode-pill">QUIZ</span>
+          </button>
+
+          <button type="button" class="mode-card" data-quiz-action="start-match" (click)="start('match')">
+            <div class="mode-icon-box">🔗</div>
+            <div class="mode-info">
+              <strong class="mode-name">დაწყვილების არენა</strong>
+              <span class="mode-sub">სიტყვები & ანტონიმების მატრიცა</span>
+            </div>
+            <span class="mode-pill">MATCH</span>
           </button>
         </div>
       </section>
     }
+
     @case ('mc') {
       @for (r of [run()]; track r) {
         <app-multiple-choice (done)="finished($event, 'mc')" />
       }
     }
+
     @case ('match') {
       @for (r of [run()]; track r) {
         <app-matching [kind]="matchKind()" (done)="finished($event, 'match')" />
       }
     }
+
     @case ('result') {
-      <section class="card welcome ka">
-        <div class="blob" aria-hidden="true">🏆</div>
-        <h1>{{ correct() }} / {{ total() }}</h1>
-        <p class="sub">{{ resultMessage() }}</p>
-        <button type="button" class="btn big" data-quiz-action="restart" (click)="start('mix')">
-          თავიდან 🎀
+      <section class="card cyber-card result-screen ka">
+        <div class="rank-pod" [style.--rank-color]="rank().color">
+          <div class="rank-ring"></div>
+          <div class="rank-badge">{{ rank().badge }}</div>
+          <div class="rank-title">{{ rank().label }}</div>
+        </div>
+
+        <div class="score-card">
+          <div class="score-numbers">
+            <span class="score-cur">{{ correct() }}</span>
+            <span class="score-div">/</span>
+            <span class="score-all">{{ total() }}</span>
+          </div>
+          <div class="accuracy-tag">🎯 {{ accuracyPct() }}% ACCURACY</div>
+        </div>
+
+        <p class="result-quote">{{ resultMessage() }}</p>
+
+        <div class="xp-awarded-badge">
+          ⚡ +{{ correct() * 100 }} XP GAINED!
+        </div>
+
+        <button type="button" class="btn-hero" data-quiz-action="restart" (click)="start('mix')">
+          <span class="btn-glow"></span>
+          <span class="btn-inner">
+            <span class="btn-emoji">🚀</span>
+            <span class="btn-main">თავიდან დაწყება</span>
+          </span>
         </button>
-        <button type="button" class="chip" (click)="stage.set('welcome')">მთავარი</button>
+
+        <button type="button" class="btn-ghost" (click)="stage.set('welcome')">
+          🏠 მთავარი მენიუ
+        </button>
       </section>
     }
   }

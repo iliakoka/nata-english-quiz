@@ -1,18 +1,28 @@
-<section class="card quiz">
+<section class="card cyber-card matching-view">
   <div class="topbar">
-    <span class="badge">🔗 {{ matched().length }}/{{ left().length }}</span>
-    <span class="counter">{{ title() }}</span>
-    <span class="badge fire" [class.hot]="mistakes() === 0 && matched().length > 2">✨ {{ left().length - mistakes() }}</span>
+    <span class="badge link-badge">🔗 {{ matched().length }}/{{ left().length }}</span>
+    <span class="counter mission-pill">{{ title() }}</span>
+    <span class="badge shields-badge" [class.hot]="mistakes() === 0 && matched().length > 2">
+      🛡️ SHIELDS: {{ left().length - mistakes() }}
+    </span>
   </div>
-  <div class="progress"><span [style.width.%]="progress()"></span></div>
-  <p class="feedback-line" aria-live="polite">{{ message() }}</p>
+
+  <div class="progress cyber-progress">
+    <span [style.width.%]="progress()"></span>
+  </div>
+
+  <p class="feedback-line cyber-msg" aria-live="polite">
+    <span class="pulse-dot"></span>
+    {{ message() }}
+  </p>
 
   <div class="match-grid">
-    <div class="col">
+    <div class="col col-left">
+      <div class="col-header">ENGLISH</div>
       @for (p of left(); track p.key) {
         <button
           type="button"
-          class="tile"
+          class="tile tile-left"
           [class.selected]="selected() === p.key"
           [class.matched]="matched().includes(p.key)"
           [disabled]="matched().includes(p.key)"
@@ -20,15 +30,21 @@
           [attr.data-answer-selected]="p.left"
           (click)="pickLeft(p)"
         >
-          {{ p.left }}
+          <span class="tile-dot"></span>
+          <span class="tile-label">{{ p.left }}</span>
+          @if (matched().includes(p.key)) {
+            <span class="tile-check">✓</span>
+          }
         </button>
       }
     </div>
-    <div class="col">
+
+    <div class="col col-right">
+      <div class="col-header">{{ kind() === 'opposites' ? 'OPPOSITE' : 'GEORGIAN' }}</div>
       @for (p of right(); track p.key) {
         <button
           type="button"
-          class="tile"
+          class="tile tile-right"
           [class.ka]="kind() === 'words'"
           [class.matched]="matched().includes(p.key)"
           [class.shake]="shaking() === p.key"
@@ -37,20 +53,28 @@
           [attr.data-answer-selected]="p.right"
           (click)="pickRight(p)"
         >
-          {{ p.right }}
+          <span class="tile-dot"></span>
+          <span class="tile-label">{{ p.right }}</span>
+          @if (matched().includes(p.key)) {
+            <span class="tile-check">✓</span>
+          }
         </button>
       }
     </div>
   </div>
 
   @if (allDone()) {
-    <div class="feedback good">
+    <div class="feedback cyber-feedback good">
       <div class="confetti" aria-hidden="true">
         @for (s of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; track s) {
-          <i [style.--i]="s">{{ ['💖', '✨', '🌸', '⭐'][s % 4] }}</i>
+          <i [style.--i]="s">{{ ['⚡', '💎', '✨', '🔥'][s % 4] }}</i>
         }
       </div>
-      <button type="button" class="btn" (click)="finish()">Continue 🎀</button>
+      <div class="feedback-status">
+        <span class="feedback-icon">🏆</span>
+        <p class="feedback-msg">ROUND COMPLETE! ⚡</p>
+      </div>
+      <button type="button" class="btn-action next-btn" (click)="finish()">CONTINUE MISSION ➜</button>
     </div>
   }
 </section>

@@ -1,5 +1,6 @@
 import { Component, OnInit, output, signal, computed, input } from '@angular/core';
 import { ClarityService } from './clarity.service';
+import { SoundService } from './sound.service';
 import { OPPOSITES, Pair, TARGET_WORDS } from './challenge';
 import { shuffle } from './words';
 
@@ -26,7 +27,10 @@ export class Matching implements OnInit {
   );
   private readonly missed = new Set<string>();
 
-  constructor(private clarity: ClarityService) {}
+  constructor(
+    private clarity: ClarityService,
+    private sound: SoundService,
+  ) {}
 
   ngOnInit(): void {
     const opposites = this.kind() === 'opposites';
@@ -40,16 +44,17 @@ export class Matching implements OnInit {
     this.message.set(
       opposites
         ? 'Find the OPPOSITE of each word 🔄'
-        : 'Tap an English word, then its Georgian match 💫',
+        : 'Tap an English word, then its Georgian match ⚡',
     );
   }
 
   protected title(): string {
-    return this.kind() === 'opposites' ? 'Opposites 🔄' : 'Match the pairs 🔗';
+    return this.kind() === 'opposites' ? 'ANTONYM MATRIX 🔄' : 'NEURAL MATCH ⚡';
   }
 
   protected pickLeft(p: Pair): void {
     if (this.matched().includes(p.key)) return;
+    this.sound.tap();
     this.selected.set(this.selected() === p.key ? null : p.key);
   }
 
@@ -64,19 +69,22 @@ export class Matching implements OnInit {
       answer_result: correct ? 'correct' : 'wrong',
     });
     if (correct) {
+      this.sound.correct();
       this.matched.update((m) => [...m, sel]);
       this.selected.set(null);
-      this.message.set(this.allDone() ? 'All matched! 🎉' : 'Lovely match! 💖');
+      this.message.set(this.allDone() ? 'GRID CLEARED! 🏆⚡' : 'PERFECT LOCK! 🎯');
     } else {
+      this.sound.wrong();
       this.missed.add(sel);
       this.mistakes.update((n) => n + 1);
-      this.message.set('Not quite, try again 🌷');
+      this.message.set('Glitch detected! Try again 🛡️');
       this.shaking.set(p.key);
       setTimeout(() => this.shaking.set(null), 450);
     }
   }
 
   protected finish(): void {
+    this.sound.tap();
     this.done.emit({ correct: this.left().length - this.missed.size, total: this.left().length });
   }
 }

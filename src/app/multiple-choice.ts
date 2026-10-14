@@ -1,5 +1,6 @@
 import { Component, OnInit, output, signal, computed, input } from '@angular/core';
 import { ClarityService } from './clarity.service';
+import { SoundService } from './sound.service';
 import { ALL_WORDS, SENTENCES, TARGET_WORDS, similar } from './challenge';
 import { ENCOURAGE, PRAISE, Word, shuffle } from './words';
 
@@ -39,7 +40,10 @@ export class MultipleChoice implements OnInit {
   protected readonly progress = computed(() => (this.index() / this.questions().length) * 100);
   protected readonly sparks = Array.from({ length: 14 }, (_, i) => i);
 
-  constructor(private clarity: ClarityService) {}
+  constructor(
+    private clarity: ClarityService,
+    private sound: SoundService,
+  ) {}
 
   ngOnInit(): void {
     const words = shuffle(TARGET_WORDS);
@@ -94,8 +98,18 @@ export class MultipleChoice implements OnInit {
     const correct = norm(option) === norm(q.answer);
     this.picked.set(option);
     this.message.set(shuffle(correct ? PRAISE : ENCOURAGE)[0]);
-    if (correct) this.score.update((x) => x + 1);
-    this.streak.update((s) => (correct ? s + 1 : 0));
+    if (correct) {
+      this.score.update((x) => x + 1);
+      this.streak.update((s) => s + 1);
+      if (this.streak() >= 2) {
+        this.sound.combo(this.streak());
+      } else {
+        this.sound.correct();
+      }
+    } else {
+      this.streak.set(0);
+      this.sound.wrong();
+    }
     this.clarity.track(correct ? 'answer_correct' : 'answer_wrong', {
       quiz_mode: q.kind === 'choice' ? 'multiple_choice' : q.kind,
       direction: q.kind === 'choice' ? (q.toGeorgian ? 'en_to_ka' : 'ka_to_en') : q.kind,
@@ -116,6 +130,7 @@ export class MultipleChoice implements OnInit {
   }
 
   protected next(): void {
+    this.sound.tap();
     if (this.index() + 1 >= this.questions().length) {
       this.done.emit({ correct: this.score(), total: this.questions().length });
       return;
