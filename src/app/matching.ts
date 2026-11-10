@@ -44,12 +44,12 @@ export class Matching implements OnInit {
     this.message.set(
       opposites
         ? 'Find the OPPOSITE of each word 🔄'
-        : 'Tap an English word, then its Georgian match ⚡',
+        : 'Tap an English word, then its Georgian match 💖',
     );
   }
 
   protected title(): string {
-    return this.kind() === 'opposites' ? 'ANTONYM MATRIX 🔄' : 'NEURAL MATCH ⚡';
+    return this.kind() === 'opposites' ? 'ANTONYM HARMONY 🔄' : 'HEART MATCH 💖';
   }
 
   protected pickLeft(p: Pair): void {
@@ -72,12 +72,12 @@ export class Matching implements OnInit {
       this.sound.correct();
       this.matched.update((m) => [...m, sel]);
       this.selected.set(null);
-      this.message.set(this.allDone() ? 'GRID CLEARED! 🏆⚡' : 'PERFECT LOCK! 🎯');
+      this.message.set(this.allDone() ? 'ALL MATCHED WITH LOVE! 💖🌹' : 'LOVELY MATCH! ✨');
     } else {
       this.sound.wrong();
       this.missed.add(sel);
       this.mistakes.update((n) => n + 1);
-      this.message.set('Glitch detected! Try again 🛡️');
+      this.message.set('Almost there, try again my love 🌷');
       this.shaking.set(p.key);
       setTimeout(() => this.shaking.set(null), 450);
     }

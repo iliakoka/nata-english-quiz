@@ -1,28 +1,26 @@
-<section class="card cyber-card matching-view">
-  <div class="topbar">
-    <span class="badge link-badge">🔗 {{ matched().length }}/{{ left().length }}</span>
-    <span class="counter mission-pill">{{ title() }}</span>
-    <span class="badge shields-badge" [class.hot]="mistakes() === 0 && matched().length > 2">
-      🛡️ SHIELDS: {{ left().length - mistakes() }}
-    </span>
+<section class="card romantic-card quiz-card ka">
+  <!-- Clean Romantic Top Header -->
+  <div class="quiz-top-bar">
+    <span class="quiz-step-tag">{{ matched().length }} / {{ left().length }} წყვილი</span>
+    <span class="quiz-kind-tag">{{ title() }} 🌸</span>
   </div>
 
-  <div class="progress cyber-progress">
-    <span [style.width.%]="progress()"></span>
+  <div class="romantic-progress-track">
+    <div class="progress-bar-fill" [style.width.%]="progress()"></div>
   </div>
 
-  <p class="feedback-line cyber-msg" aria-live="polite">
-    <span class="pulse-dot"></span>
-    {{ message() }}
-  </p>
+  <div class="matching-hint-text" aria-live="polite">
+    <span>{{ message() }}</span>
+  </div>
 
-  <div class="match-grid">
-    <div class="col col-left">
-      <div class="col-header">ENGLISH</div>
+  <!-- Dual Deck Grid -->
+  <div class="matching-dual-deck">
+    <div class="deck-column deck-left">
+      <div class="deck-label-tag">ინგლისური</div>
       @for (p of left(); track p.key) {
         <button
           type="button"
-          class="tile tile-left"
+          class="tile studio-match-card tile-left"
           [class.selected]="selected() === p.key"
           [class.matched]="matched().includes(p.key)"
           [disabled]="matched().includes(p.key)"
@@ -30,21 +28,20 @@
           [attr.data-answer-selected]="p.left"
           (click)="pickLeft(p)"
         >
-          <span class="tile-dot"></span>
-          <span class="tile-label">{{ p.left }}</span>
+          <span class="match-card-word">{{ p.left }}</span>
           @if (matched().includes(p.key)) {
-            <span class="tile-check">✓</span>
+            <span class="match-card-check">✓</span>
           }
         </button>
       }
     </div>
 
-    <div class="col col-right">
-      <div class="col-header">{{ kind() === 'opposites' ? 'OPPOSITE' : 'GEORGIAN' }}</div>
+    <div class="deck-column deck-right">
+      <div class="deck-label-tag">{{ kind() === 'opposites' ? 'ანტონიმი' : 'ქართული' }}</div>
       @for (p of right(); track p.key) {
         <button
           type="button"
-          class="tile tile-right"
+          class="tile studio-match-card tile-right"
           [class.ka]="kind() === 'words'"
           [class.matched]="matched().includes(p.key)"
           [class.shake]="shaking() === p.key"
@@ -53,10 +50,9 @@
           [attr.data-answer-selected]="p.right"
           (click)="pickRight(p)"
         >
-          <span class="tile-dot"></span>
-          <span class="tile-label">{{ p.right }}</span>
+          <span class="match-card-word">{{ p.right }}</span>
           @if (matched().includes(p.key)) {
-            <span class="tile-check">✓</span>
+            <span class="match-card-check">✓</span>
           }
         </button>
       }
@@ -64,17 +60,22 @@
   </div>
 
   @if (allDone()) {
-    <div class="feedback cyber-feedback good">
+    <div class="feedback romantic-feedback-drawer good">
       <div class="confetti" aria-hidden="true">
         @for (s of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; track s) {
-          <i [style.--i]="s">{{ ['⚡', '💎', '✨', '🔥'][s % 4] }}</i>
+          <i [style.--i]="s">{{ ['✨', '🌸', '💫', '💖'][s % 4] }}</i>
         }
       </div>
-      <div class="feedback-status">
-        <span class="feedback-icon">🏆</span>
-        <p class="feedback-msg">ROUND COMPLETE! ⚡</p>
+      <div class="feedback-indicator">
+        <span class="feedback-symbol">🌟</span>
+        <div class="feedback-text-wrap">
+          <h4 class="feedback-title">რაუნდი წარმატებით დასრულდა!</h4>
+          <p class="answer-reveal">ყველა წყვილი იდეალურად დაემთხვა ♡</p>
+        </div>
       </div>
-      <button type="button" class="btn-action next-btn" (click)="finish()">CONTINUE MISSION ➜</button>
+      <button type="button" class="studio-primary-btn next-btn" (click)="finish()">
+        <span>შემდეგ ეტაპზე გადასვლა ♡</span>
+      </button>
     </div>
   }
 </section>

@@ -46,7 +46,6 @@ export const WORDS: Word[] = [
   { en: 'One', ka: 'ერთი', emoji: '1️⃣' },
   { en: 'Two', ka: 'ორი', emoji: '2️⃣' },
   { en: 'Three', ka: 'სამი', emoji: '3️⃣' },
-  // Slightly harder words
   { en: 'Window', ka: 'ფანჯარა', emoji: '🪟' },
   { en: 'Door', ka: 'კარი', emoji: '🚪' },
   { en: 'Kitchen', ka: 'სამზარეულო', emoji: '🍳' },
@@ -100,16 +99,17 @@ export function shuffle<T>(items: T[]): T[] {
 }
 
 export const PRAISE = [
-  'BOOM! Perfect, Nata! ⚡',
-  'UNSTOPPABLE! 🚀',
-  'CRITICAL HIT! 🔥',
-  'GALAXY BRAIN! 🧠✨',
-  'LEGENDARY! 👑',
-  'COMBO MASTER! 🎯',
+  'Awesome job, Nata! 🌸',
+  'Spot on! ✨',
+  'You got it! 💖',
+  'Brilliant! 🌟',
+  'Nice one, Nata! 🌷',
+  'So quick and smart! 💫',
 ];
 
 export const ENCOURAGE = [
-  'Shields holding! Next one is yours 🛡️',
-  'Nice try, Nata! Recharge & fire ⚡',
-  'Mistakes power up your XP! Keep going 🚀',
+  'Good try, Nata! Next one is yours 🌷',
+  'Almost had it! Keep going ✨',
+  'No worries at all, you are learning fast 🌸',
+  'Mistakes help us get better! 🌱',
 ];

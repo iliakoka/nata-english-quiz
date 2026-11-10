@@ -1,88 +1,94 @@
-<div class="cyber-bg" aria-hidden="true">
-  <div class="grid-layer"></div>
-  <div class="glow-orb orb-1"></div>
-  <div class="glow-orb orb-2"></div>
-  @for (s of ['⚡', '🛸', '🚀', '👾', '⭐', '💎', '👑', '✨', '🔥', '🎯']; track $index) {
-    <span class="floating-item" [style.--n]="$index">{{ s }}</span>
-  }
+<div class="romantic-canvas" aria-hidden="true">
+  <div class="ambient-glow glow-rose"></div>
+  <div class="ambient-glow glow-wine"></div>
+  <div class="ambient-glow glow-gold"></div>
+  <div class="floating-petals-layer">
+    @for (s of ['🌸', '💖', '✨', '🌹', '💌', '🌷', '💫', '🎀']; track $index) {
+      <span class="petal-item" [style.--n]="$index">{{ s }}</span>
+    }
+  </div>
 </div>
 
-<header class="hud-header">
-  <div class="hud-stat xp-pill">
-    <span class="hud-icon">⚡</span>
-    <span class="hud-label">{{ totalXp() }} XP</span>
+<header class="studio-header">
+  <div class="header-brand">
+    <span class="brand-heart">🌸</span>
+    <span class="brand-text">Nata's English Quiz</span>
   </div>
-  @if (bestScore() > 0) {
-    <div class="hud-stat best-pill">
-      <span class="hud-icon">🏆</span>
-      <span class="hud-label">Best: {{ bestScore() }}%</span>
-    </div>
-  }
-  <button
-    type="button"
-    class="hud-btn sound-btn"
-    (click)="sound.toggle()"
-    [attr.aria-label]="sound.enabled() ? 'Mute sound' : 'Unmute sound'"
-  >
-    {{ sound.enabled() ? '🔊' : '🔇' }}
-  </button>
+  <div class="header-actions">
+    <button
+      type="button"
+      class="icon-btn sound-btn"
+      (click)="sound.toggle()"
+      [attr.aria-label]="sound.enabled() ? 'Mute sound' : 'Unmute sound'"
+      title="Sound effects toggle"
+    >
+      {{ sound.enabled() ? '🎵' : '🔇' }}
+    </button>
+  </div>
 </header>
 
-<main class="shell">
+<main class="studio-shell">
   @switch (stage()) {
     @case ('welcome') {
-      <section class="card cyber-card welcome ka">
-        <div class="mascot-wrapper">
-          <div class="speech-bubble">
-            <span>{{ mascotQuote() }}</span>
-          </div>
-          <button
-            type="button"
-            class="mascot-pod"
-            [class.bop]="mascotBopping()"
-            (click)="tapMascot()"
-            title="Tap for boost!"
-          >
-            <span class="mascot-art">👾</span>
-            <span class="mascot-pulse"></span>
-          </button>
-          <span class="mascot-hint">დააკლიკე ბუსტისთვის! ⚡</span>
+      <section class="card romantic-card welcome-card ka">
+        <!-- Top: Pure Romantic Greeting -->
+        <div class="welcome-header">
+          <div class="floral-flourish">🌸 ♡ 🌸</div>
+          <h1 class="hero-heading">გამარჯობა ნატა ♡</h1>
         </div>
 
-        <h1 class="hero-title">
-          გამარჯობა ნატა! ⚡<br>
-          <span class="cyber-gradient">CYBER QUEST</span>
-        </h1>
-        <p class="sub">ახალი რთული დონეები, კომბოები და ჯილდოები 🎮</p>
-
-        <button type="button" class="btn-hero" data-quiz-action="start" (click)="start('mix')">
-          <span class="btn-glow"></span>
-          <span class="btn-inner">
-            <span class="btn-emoji">🚀</span>
-            <span class="btn-text-group">
-              <span class="btn-main">დავიწყოთ მისია!</span>
-              <span class="btn-sub">FULL ADVENTURE • 3 ROUNDS</span>
+        <!-- Romantic Love Letter (Stationery Paper with Wax Seal) -->
+        <div
+          class="love-letter-card interactive-letter"
+          (click)="tapMascot()"
+          role="button"
+          tabindex="0"
+          (keydown.enter)="tapMascot()"
+          aria-label="გახსენი რომანტიკული წერილი"
+        >
+          <!-- Subtle Postmark & Counter -->
+          <div class="letter-top-row">
+            <span class="letter-stamp">💌 with love for nata</span>
+            <span class="letter-counter">
+              {{ envelopeTaps() === 0 ? '✨ შეეხე გასახსნელად' : 'ბარათი ' + (((envelopeTaps() - 1) % totalQuotes) + 1) + ' / ' + totalQuotes }}
             </span>
-          </span>
-        </button>
+          </div>
 
-        <div class="modes-grid">
-          <button type="button" class="mode-card" data-quiz-action="start-mc" (click)="start('mc')">
-            <div class="mode-icon-box">⚡</div>
-            <div class="mode-info">
-              <strong class="mode-name">სწორი პასუხის არჩევა</strong>
-              <span class="mode-sub">15 შეკითხვა • გრამატიკა & აკრეფა</span>
-            </div>
-            <span class="mode-pill">QUIZ</span>
-          </button>
+          <!-- Note Content on Warm Parchment Paper -->
+          <div class="speech-bubble letter-parchment">
+            <span class="note-text">{{ mascotQuote() }}</span>
+          </div>
 
-          <button type="button" class="mode-card" data-quiz-action="start-match" (click)="start('match')">
-            <div class="mode-icon-box">🔗</div>
-            <div class="mode-info">
-              <strong class="mode-name">დაწყვილების არენა</strong>
-              <span class="mode-sub">სიტყვები & ანტონიმების მატრიცა</span>
+          <!-- Classic Wax Seal & Click Callout -->
+          <div class="wax-seal-wrapper">
+            <button
+              type="button"
+              class="mascot-pod wax-seal-btn"
+              [class.bop]="mascotBopping()"
+              (click)="tapMascot(); $event.stopPropagation()"
+              title="შეეხე ახალი წერილისთვის"
+              aria-label="დააკლიკე ბარათს ახალი შეტყობინებისთვის"
+            >
+              <span class="wax-seal-art">💌</span>
+            </button>
+
+            <!-- Eye-catching, prominent tap callout -->
+            <div class="envelope-tap-callout">
+              <span class="callout-hand">👆</span>
+              <span class="callout-text">
+                {{ envelopeTaps() === 0 ? 'დააკლიკე კონვერტს წასაკითხად!' : 'დააკლიკე კიდევ ახალი წერილისთვის!' }}
+              </span>
             </div>
-            <span class="mode-pill">MATCH</span>
+          </div>
+        </div>
+
+        <!-- Bottom: Quiz Start -->
+        <div class="welcome-action-footer">
+          <p class="hero-desc">
+            პატარა, სასიამოვნო ინგლისურის ქვიზი შენთვის 🌸
+          </p>
+          <button type="button" class="studio-primary-btn romantic-start-btn" data-quiz-action="start" (click)="start('mix')">
+            <span class="btn-text">დავიწყოთ ქვიზი ♡</span>
           </button>
         </div>
       </section>
@@ -100,39 +106,119 @@
       }
     }
 
-    @case ('result') {
-      <section class="card cyber-card result-screen ka">
-        <div class="rank-pod" [style.--rank-color]="rank().color">
-          <div class="rank-ring"></div>
-          <div class="rank-badge">{{ rank().badge }}</div>
-          <div class="rank-title">{{ rank().label }}</div>
+    @case ('feeling') {
+      <section class="card romantic-card feeling-view ka">
+        <div class="feeling-top-pill">
+          <span>ბოლო შეკითხვა 💌</span>
         </div>
 
-        <div class="score-card">
-          <div class="score-numbers">
-            <span class="score-cur">{{ correct() }}</span>
-            <span class="score-div">/</span>
-            <span class="score-all">{{ total() }}</span>
+        <h2 class="feeling-prompt">What do you feel about me?</h2>
+        <p class="feeling-sub">ერთი პატარა და გულწრფელი შეკითხვა შედეგებამდე... 😊</p>
+
+        <div class="feeling-grid">
+          <button
+            type="button"
+            class="feeling-btn mood-love"
+            [class.selected]="selectedFeeling() === 'love'"
+            (click)="chooseFeeling('love')"
+          >
+            <div class="mood-icon">💖</div>
+            <div class="mood-content">
+              <strong>Love</strong>
+              <span>Warm & Sweet</span>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            class="feeling-btn mood-friendship"
+            [class.selected]="selectedFeeling() === 'friendship'"
+            (click)="chooseFeeling('friendship')"
+          >
+            <div class="mood-icon">🤝</div>
+            <div class="mood-content">
+              <strong>Friendship</strong>
+              <span>True & Loyal</span>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            class="feeling-btn mood-something"
+            [class.selected]="selectedFeeling() === 'something'"
+            (click)="chooseFeeling('something')"
+          >
+            <div class="mood-icon">✨</div>
+            <div class="mood-content">
+              <strong>Something</strong>
+              <span>Mystery & Spark</span>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            class="feeling-btn mood-nothing"
+            [class.selected]="selectedFeeling() === 'nothing'"
+            (click)="chooseFeeling('nothing')"
+          >
+            <div class="mood-icon">👀</div>
+            <div class="mood-content">
+              <strong>Nothing</strong>
+              <span>Cool & Direct</span>
+            </div>
+          </button>
+        </div>
+
+        @if (feelingReaction(); as r) {
+          <div class="feeling-feedback-box feeling-feedback">
+            <div class="feedback-head">
+              <span class="feedback-emoji">{{ r.emoji }}</span>
+              <h3 class="feedback-heading">{{ r.title }}</h3>
+            </div>
+            <p class="feedback-copy">{{ r.text }}</p>
+
+            <button type="button" class="studio-primary-btn next-btn" (click)="seeResults()">
+              <span>შედეგების ნახვა 🎀</span>
+            </button>
           </div>
-          <div class="accuracy-tag">🎯 {{ accuracyPct() }}% ACCURACY</div>
+        }
+      </section>
+    }
+
+    @case ('result') {
+      <section class="card romantic-card result-screen ka">
+        <div class="result-badge-pod" [style.--rank-color]="rank().color">
+          <span class="pod-emoji">{{ rank().badge }}</span>
+          <span class="pod-label">{{ rank().label }}</span>
         </div>
 
-        <p class="result-quote">{{ resultMessage() }}</p>
-
-        <div class="xp-awarded-badge">
-          ⚡ +{{ correct() * 100 }} XP GAINED!
+        <div class="score-display">
+          <span class="score-number">{{ correct() }}</span>
+          <span class="score-divider">/</span>
+          <span class="score-total">{{ total() }}</span>
+        </div>
+        <div class="accuracy-pill">
+          <span>✨ სიზუსტე: {{ accuracyPct() }}%</span>
         </div>
 
-        <button type="button" class="btn-hero" data-quiz-action="restart" (click)="start('mix')">
-          <span class="btn-glow"></span>
-          <span class="btn-inner">
-            <span class="btn-emoji">🚀</span>
-            <span class="btn-main">თავიდან დაწყება</span>
-          </span>
+        <p class="result-message-text">{{ resultMessage() }}</p>
+
+        @if (selectedFeeling(); as f) {
+          <div class="feeling-summary-tag">
+            💌 შენი პასუხი: <strong>{{ f === 'love' ? 'Love 💖' : f === 'friendship' ? 'Friendship 🤝' : f === 'something' ? 'Something ✨' : 'Nothing 👀' }}</strong>
+          </div>
+        }
+
+        <div class="xp-earned-banner">
+          <span>💖 +{{ correct() * 100 }} ქულა</span>
+        </div>
+
+        <button type="button" class="studio-primary-btn" data-quiz-action="restart" (click)="start('mix')">
+          <span class="btn-text">თავიდან დაწყება ♡</span>
         </button>
 
-        <button type="button" class="btn-ghost" (click)="stage.set('welcome')">
-          🏠 მთავარი მენიუ
+        <button type="button" class="studio-ghost-btn" (click)="stage.set('welcome')">
+          მთავარ გვერდზე დაბრუნება
         </button>
       </section>
     }

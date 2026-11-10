@@ -29,7 +29,9 @@ export class SoundService {
   private initCtx(): AudioContext | null {
     if (!this.enabled()) return null;
     if (!this.ctx && typeof window !== 'undefined') {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
       }
@@ -47,18 +49,18 @@ export class SoundService {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(600, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.05);
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08); // A5
 
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.09);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start();
-      osc.stop(ctx.currentTime + 0.05);
+      osc.stop(ctx.currentTime + 0.09);
     } catch {
-      // ignore audio errors
+      // ignore
     }
   }
 
@@ -66,22 +68,23 @@ export class SoundService {
     const ctx = this.initCtx();
     if (!ctx) return;
     try {
-      const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+      // Romantic music-box harp arpeggio: C5, E5, G5, B5, C6
+      const notes = [523.25, 659.25, 783.99, 987.77, 1046.5];
       notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        const start = ctx.currentTime + idx * 0.06;
+        const start = ctx.currentTime + idx * 0.07;
 
-        osc.type = 'triangle';
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, start);
 
-        gain.gain.setValueAtTime(0.12, start);
-        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.16);
+        gain.gain.setValueAtTime(0.09, start);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.32);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start(start);
-        osc.stop(start + 0.16);
+        osc.stop(start + 0.32);
       });
     } catch {
       // ignore
@@ -92,14 +95,15 @@ export class SoundService {
     const ctx = this.initCtx();
     if (!ctx) return;
     try {
+      // Gentle, caring warm tone instead of harsh buzzer
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(220, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(140, ctx.currentTime + 0.22);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(329.63, ctx.currentTime); // E4
+      osc.frequency.exponentialRampToValueAtTime(293.66, ctx.currentTime + 0.2); // D4
 
-      gain.gain.setValueAtTime(0.1, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.22);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -114,20 +118,24 @@ export class SoundService {
     const ctx = this.initCtx();
     if (!ctx) return;
     try {
-      const baseFreq = Math.min(1200, 440 + streak * 80);
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(baseFreq, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, ctx.currentTime + 0.12);
+      // Celestial love chime
+      const base = [659.25, 830.61, 987.77, 1318.5]; // E5, G#5, B5, E6
+      base.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const start = ctx.currentTime + idx * 0.05;
 
-      gain.gain.setValueAtTime(0.15, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, start);
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.08, start);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.35);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.35);
+      });
     } catch {
       // ignore
     }
@@ -137,22 +145,23 @@ export class SoundService {
     const ctx = this.initCtx();
     if (!ctx) return;
     try {
-      const chord = [523.25, 659.25, 783.99, 1046.5, 1318.5];
-      chord.forEach((freq, idx) => {
+      // Romantic celebration harp song: C5, G5, E5, A5, C6, E6
+      const melody = [523.25, 783.99, 659.25, 880.0, 1046.5, 1318.51];
+      melody.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        const start = ctx.currentTime + idx * 0.08;
+        const start = ctx.currentTime + idx * 0.1;
 
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, start);
 
-        gain.gain.setValueAtTime(0.15, start);
-        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.4);
+        gain.gain.setValueAtTime(0.11, start);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.55);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start(start);
-        osc.stop(start + 0.4);
+        osc.stop(start + 0.55);
       });
     } catch {
       // ignore
@@ -163,20 +172,24 @@ export class SoundService {
     const ctx = this.initCtx();
     if (!ctx) return;
     try {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1400, ctx.currentTime + 0.08);
-      osc.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.16);
+      // Sweet love heartbeat chime
+      const notes = [659.25, 987.77];
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const start = ctx.currentTime + idx * 0.08;
 
-      gain.gain.setValueAtTime(0.12, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, start);
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.16);
+        gain.gain.setValueAtTime(0.09, start);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.28);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.28);
+      });
     } catch {
       // ignore
     }

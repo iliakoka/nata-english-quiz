@@ -4,17 +4,56 @@ import { SoundService } from './sound.service';
 import { MultipleChoice } from './multiple-choice';
 import { Matching } from './matching';
 
-type Stage = 'welcome' | 'mc' | 'match' | 'result';
+type Stage = 'welcome' | 'mc' | 'match' | 'feeling' | 'result';
 type Mode = 'mix' | 'mc' | 'match';
 
-const MASCOT_QUOTES = [
-  'მზად ხარ რეკორდის მოსახსნელად? ⚡',
-  'Nata, you are going to crush this! 🚀',
-  'Level up your English brain power! 🧠',
-  'დღეს ახალი ლეველი უნდა დავხუროთ! 🔥',
-  'Ready for the ultimate English battle? 👾',
-  'Focus mode: ON! 🎯',
+const ENVELOPE_QUOTES = [
+  // Georgian quotes
+  'შენი ღიმილი ძალიან გიხდება ✨',
+  'შენთან საუბარი ყოველთვის დღის საუკეთესო ნაწილია 🌸',
+  'შენს თვალებში განსაკუთრებული სითბო და სინათლეა 💖',
+  'ყოველთვის ახერხებ ჩემს სახეზე ღიმილის მოტანას 🌷',
+  'შენი დანახვა ყოველთვის მიხარია, ნატა 💌',
+  'შენს გვერდით დრო ისე სწრაფად გადის, ვერც ვამჩნევ ✨',
+  'შენი ხმა და სიცილი საოცრად მშვიდ და კარგ განწყობას მიქმნის 🎀',
+  'ძალიან საყვარელი და განსაკუთრებული ადამიანი ხარ 💫',
+  'დღეს განსაკუთრებულად ლამაზი დღეა, რადგან შენ გწერ 🌹',
+  'არ დაგავიწყდეს, რა საოცარი და ნიჭიერი ხარ 💖',
+  'შენთან ყოფნა ყველაზე მყუდრო და სასიამოვნო რამეა ☕🌸',
+  'შენი პოზიტივი და ენერგია ყველაფერს ანათებს ✨',
+  'იმედი მაქვს, ეს პატარა სიურპრიზი გულს გაგითბობს 💌',
+  'შენნაირი ადამიანი ძალიან იშვიათია და ამიტომ ხარ განსაკუთრებული 🌷',
+  'ერთი შეხედვაც კი საკმარისია მთელი დღის გასალამაზებლად 🌸',
+  'შენს ღიმილზე უფრო ლამაზი ცოტა რამ თუ მინახავს 💖',
+  'როცა იღიმი, სამყარო თითქოს უფრო ფერადი ხდება 🌈',
+  'შენს თბილ გულს არასდროს დაუკარგავს თავისი სინათლე ✨',
+
+  // English quotes
+  'Hope this little quiz brings a bright smile to your face today 😊',
+  'You have such a warm aura and a genuinely kind heart 💖',
+  'Thinking of you always makes my day a hundred times brighter ✨',
+  'You are effortlessly charming in everything you do 🌸',
+  'Your smile is honestly contagious in the best possible way 🌷',
+  'Talking to you is always the highlight of my day 💌',
+  'You have this quiet magic that makes everything feel lighter 💫',
+  'Never forget how truly special and appreciated you are 🎀',
+  'Just a sweet reminder that you mean a lot to me 💖',
+  'Wishing you the sweetest and happiest day ahead, Nata! 🌹',
+  'You bring out the best smiles in everyone around you ✨',
+  'You are smart, beautiful, and wonderful inside and out 🌸',
+  'I hope your day is as lovely and sweet as you are 🌷',
+  'Whenever you smile, the whole room feels a little warmer 💖',
+  'Just wanted to send a little happiness and sunshine your way 💌',
+  'No matter what, keep that beautiful confidence shining 💫',
+  'Every single conversation with you leaves me smiling 😊',
+  'You have a gentle way of making people feel good just by being yourself 🌸',
 ];
+
+interface FeelingReaction {
+  title: string;
+  text: string;
+  emoji: string;
+}
 
 @Component({
   selector: 'app-root',
@@ -32,17 +71,24 @@ export class App {
   protected readonly matchKind = signal<'words' | 'opposites'>('words');
   protected readonly totalXp = signal<number>(this.loadXp());
   protected readonly bestScore = signal<number>(this.loadBestScore());
-  protected readonly mascotQuote = signal<string>(MASCOT_QUOTES[0]);
+  protected readonly mascotQuote = signal<string>(ENVELOPE_QUOTES[0]);
   protected readonly mascotBopping = signal<boolean>(false);
+  protected readonly envelopeTaps = signal<number>(0);
+  protected readonly totalQuotes = ENVELOPE_QUOTES.length;
+  private quotePool: number[] = [];
+
+  // End of quiz special question
+  protected readonly selectedFeeling = signal<string | null>(null);
+  protected readonly feelingReaction = signal<FeelingReaction | null>(null);
 
   protected readonly rank = computed(() => {
-    if (this.total() === 0) return { label: 'ROOKIE', badge: '🌱', color: '#94a3b8' };
+    if (this.total() === 0) return { label: 'GOOD START', badge: '🌱', color: '#ffb3c6' };
     const pct = this.correct() / this.total();
-    if (pct === 1) return { label: 'S+ TITAN', badge: '👑', color: '#ffbe0b' };
-    if (pct >= 0.8) return { label: 'S CYBER MASTER', badge: '💎', color: '#00f5d4' };
-    if (pct >= 0.6) return { label: 'A WARRIOR', badge: '⚡', color: '#a855f7' };
-    if (pct >= 0.4) return { label: 'B EXPLORER', badge: '🚀', color: '#38bdf8' };
-    return { label: 'APPRENTICE', badge: '🛡️', color: '#f43f5e' };
+    if (pct === 1) return { label: 'SUPERSTAR', badge: '🌟', color: '#ffd700' };
+    if (pct >= 0.8) return { label: 'BRILLIANT', badge: '💖', color: '#ff7597' };
+    if (pct >= 0.6) return { label: 'GREAT JOB', badge: '✨', color: '#ff9ebb' };
+    if (pct >= 0.4) return { label: 'GOOD EFFORT', badge: '🌸', color: '#f8ad9d' };
+    return { label: 'NICE TRY', badge: '🌷', color: '#ffcbf2' };
   });
 
   protected readonly accuracyPct = computed(() => {
@@ -52,7 +98,24 @@ export class App {
   constructor(
     private clarity: ClarityService,
     protected sound: SoundService,
-  ) {}
+  ) {
+    this.refillQuotePool(ENVELOPE_QUOTES[0]);
+  }
+
+  private refillQuotePool(excludeQuote?: string): void {
+    const indices = Array.from({ length: ENVELOPE_QUOTES.length }, (_, i) => i);
+    // Fisher-Yates shuffle
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    // If the top element equals the excluded quote, move it down to prevent immediate repetition
+    if (excludeQuote && ENVELOPE_QUOTES[indices[indices.length - 1]] === excludeQuote && indices.length > 1) {
+      const popped = indices.pop()!;
+      indices.unshift(popped);
+    }
+    this.quotePool = indices;
+  }
 
   private loadXp(): number {
     try {
@@ -73,11 +136,22 @@ export class App {
   protected tapMascot(): void {
     this.sound.mascot();
     this.mascotBopping.set(true);
+    this.envelopeTaps.update((t) => t + 1);
     setTimeout(() => this.mascotBopping.set(false), 500);
+
     const curr = this.mascotQuote();
-    const nextQuotes = MASCOT_QUOTES.filter((q) => q !== curr);
-    const chosen = nextQuotes[Math.floor(Math.random() * nextQuotes.length)];
-    this.mascotQuote.set(chosen);
+    if (this.quotePool.length === 0) {
+      this.refillQuotePool(curr);
+    }
+
+    let nextIndex = this.quotePool.pop()!;
+    if (ENVELOPE_QUOTES[nextIndex] === curr && this.quotePool.length > 0) {
+      const altIndex = this.quotePool.pop()!;
+      this.quotePool.push(nextIndex);
+      nextIndex = altIndex;
+    }
+
+    this.mascotQuote.set(ENVELOPE_QUOTES[nextIndex]);
   }
 
   protected start(mode: Mode): void {
@@ -85,6 +159,8 @@ export class App {
     this.mode = mode;
     this.correct.set(0);
     this.total.set(0);
+    this.selectedFeeling.set(null);
+    this.feelingReaction.set(null);
     this.matchKind.set('words');
     this.run.update((r) => r + 1);
     this.stage.set(mode === 'match' ? 'match' : 'mc');
@@ -122,23 +198,63 @@ export class App {
       localStorage.setItem('nata_xp', String(newTotalXp));
     } catch {}
 
-    this.sound.fanfare();
-
     this.clarity.track('quiz_completed', {
       quiz_mode: this.mode,
       quiz_score: `${this.correct()}/${this.total()}`,
       quiz_percent: pct,
       earned_xp: earnedXp,
     });
+
+    // Go to the special feeling question before showing results!
+    this.selectedFeeling.set(null);
+    this.feelingReaction.set(null);
+    this.sound.mascot();
+    this.stage.set('feeling');
+  }
+
+  protected chooseFeeling(choice: 'love' | 'friendship' | 'nothing' | 'something'): void {
+    this.sound.tap();
+    this.selectedFeeling.set(choice);
+    this.clarity.track('feeling_selected', { feeling: choice });
+
+    if (choice === 'love') {
+      this.feelingReaction.set({
+        title: 'Awww, really? 💖',
+        text: 'That genuinely made my day! You are wonderful, Nata 🥰',
+        emoji: '💖',
+      });
+    } else if (choice === 'friendship') {
+      this.feelingReaction.set({
+        title: 'Best friends! 🤝✨',
+        text: 'Having you in my life as a friend means a lot to me 🌸',
+        emoji: '🤝',
+      });
+    } else if (choice === 'something') {
+      this.feelingReaction.set({
+        title: 'Something, huh? 👀✨',
+        text: 'I like a little mystery... curiosity makes everything interesting! 💫',
+        emoji: '✨',
+      });
+    } else {
+      this.feelingReaction.set({
+        title: 'Haha, fair enough! 😂',
+        text: 'Honest and straight to the point, I respect the honesty! 🌷',
+        emoji: '👀',
+      });
+    }
+  }
+
+  protected seeResults(): void {
+    this.sound.fanfare();
     this.stage.set('result');
   }
 
   protected resultMessage(): string {
     const pct = this.correct() / this.total();
-    if (pct === 1) return 'არარეალური შედეგი! შენ ნამდვილი კიბერ-ლეგენდა ხარ, ნატა! 👑⚡';
-    if (pct >= 0.8) return 'შესანიშნავი ქულაა, ნატა! შენი ინგლისური უმაღლეს დონეზეა! 🚀✨';
-    if (pct >= 0.6) return 'მაგარი ბრძოლა იყო, ნატა! ყოველი რაუნდით კიდევ უფრო ძლიერდები! ⚡';
-    if (pct >= 0.4) return 'კარგი მცდელობაა! კიდევ ერთი რაუნდი და რეკორდს მოხსნი! 🎯';
-    return 'არ დანებდე, ნატა! კიბერ-მეომრები მარცხით სწავლობენ. სცადე თავიდან! 🛡️';
+    if (pct === 1) return 'იდეალური შედეგია, ნატა! ყველა კითხვას ბრწყინვალედ გაეცი პასუხი! 🌟✨';
+    if (pct >= 0.8) return 'შესანიშნავი ქულაა! ძალიან კარგად იცი ეს სიტყვები 💖';
+    if (pct >= 0.6) return 'კარგი შედეგია! ყოველ ჯერზე უკეთესად გამოგდის 🌸';
+    if (pct >= 0.4) return 'კარგი მცდელობაა, ნატა! მთავარია, რომ ივარჯიშე 🌷';
+    return 'კარგი დასაწყისია! მოდი კიდევ ერთხელ ვცადოთ ერთად 😊';
   }
 }

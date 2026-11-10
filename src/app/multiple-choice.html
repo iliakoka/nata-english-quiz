@@ -1,46 +1,50 @@
-<section class="card cyber-card quiz-view">
-  <div class="topbar">
-    <span class="badge xp-badge">⚡ {{ score() * 100 }} XP</span>
-    <span class="counter mission-pill">STAGE {{ index() + 1 }}/{{ questions().length }}</span>
-    <span class="badge combo-badge" [class.hot]="streak() >= 2">
-      🔥 {{ streak() >= 2 ? 'COMBO x' + streak() : streak() }}
+<section class="card romantic-card quiz-card ka">
+  <!-- Clean Romantic Top Header -->
+  <div class="quiz-top-bar">
+    <span class="quiz-step-tag">შეკითხვა {{ index() + 1 }} / {{ questions().length }}</span>
+    <span class="quiz-kind-tag">
+      @switch (current().kind) {
+        @case ('choice') {
+          <span>{{ current().toGeorgian ? 'ინგლისური ➔ ქართული 🌸' : 'ქართული ➔ ინგლისური 🌸' }}</span>
+        }
+        @case ('sentence') {
+          <span>წინადადების შევსება 🌸</span>
+        }
+        @case ('typing') {
+          <span>სიტყვის აკრეფა 🌸</span>
+        }
+      }
     </span>
-  </div>
-
-  <div class="progress cyber-progress">
-    <span [style.width.%]="progress()"></span>
-  </div>
-
-  <div class="mission-type-tag">
-    @switch (current().kind) {
-      @case ('choice') {
-        <span>{{ current().toGeorgian ? 'TRANSLATION: EN ➔ KA' : 'TRANSLATION: KA ➔ EN' }}</span>
-      }
-      @case ('sentence') {
-        <span>GRAMMAR & SENTENCE MATRIX</span>
-      }
-      @case ('typing') {
-        <span>CYBER TYPING CHALLENGE</span>
-      }
+    @if (streak() >= 2) {
+      <span class="quiz-streak-tag">💖 {{ streak() }}</span>
     }
   </div>
 
-  <p class="hint">{{ current().hint }}</p>
+  <!-- Soft Progress Line -->
+  <div class="romantic-progress-track">
+    <div class="progress-bar-fill" [style.width.%]="progress()"></div>
+  </div>
 
-  <h2
-    class="prompt"
+  <!-- Instruction Hint -->
+  <div class="quiz-hint-text">
+    <span>{{ current().hint }}</span>
+  </div>
+
+  <!-- Prompt Area -->
+  <div
+    class="prompt-display-card"
     [class.ka]="current().kind === 'typing' || (current().kind === 'choice' && !current().toGeorgian)"
     [class.sentence]="current().kind === 'sentence'"
   >
     @if (picked() !== null && current().word) {
-      <span class="emoji">{{ current().word!.emoji }}</span>
+      <div class="prompt-emoji-badge">{{ current().word!.emoji }}</div>
     }
-    {{ current().prompt }}
-  </h2>
+    <h2 class="prompt-text">{{ current().prompt }}</h2>
+  </div>
 
   @if (current().kind === 'typing') {
-    <form class="typing" (submit)="$event.preventDefault(); submitTyped()" data-clarity-unmask="true">
-      <div class="input-glow-wrapper">
+    <form class="typing-arena typing" (submit)="$event.preventDefault(); submitTyped()" data-clarity-unmask="true">
+      <div class="typing-input-shell">
         <input
           type="text"
           name="answer"
@@ -49,7 +53,7 @@
           autocapitalize="off"
           autocorrect="off"
           spellcheck="false"
-          placeholder="Type English word here..."
+          placeholder="აკრიფე ინგლისურად..."
           [value]="typed()"
           (input)="typed.set($any($event.target).value)"
           [disabled]="picked() !== null"
@@ -58,33 +62,26 @@
         />
       </div>
 
-      @if (typed()) {
-        <div class="typed-live-preview" data-clarity-unmask="true">
-          <span class="preview-label">LIVE TYPING:</span>
-          <strong class="preview-text">{{ typed() }}</strong>
-        </div>
-      }
-
       @if (picked() === null) {
         <button
           type="submit"
-          class="btn-action"
+          class="studio-primary-btn"
           data-quiz-mode="typing"
           data-clarity-unmask="true"
           [attr.data-question-word]="current().word?.en"
           [attr.data-answer-selected]="typed()"
         >
-          CONFIRM ANSWER ⚡
+          <span>პასუხის დადასტურება ♡</span>
         </button>
       }
     </form>
   } @else {
-    <div class="options cyber-options">
+    <div class="options options-staggered-list">
       @for (opt of current().options; track opt) {
         <button
           type="button"
-          class="option cyber-opt"
-          [class]="'option cyber-opt ' + state(opt)"
+          class="option studio-choice-btn"
+          [class]="'option studio-choice-btn ' + state(opt)"
           [class.ka]="current().kind === 'choice' && current().toGeorgian"
           [disabled]="picked() !== null"
           [attr.data-quiz-mode]="current().kind === 'choice' ? 'multiple_choice' : 'sentence'"
@@ -93,37 +90,37 @@
           [attr.data-answer-correct]="opt === current().answer"
           (click)="choose(opt)"
         >
-          <span class="opt-prefix">{{ ['A', 'B', 'C', 'D'][$index] }}</span>
-          <span class="opt-content">{{ opt }}</span>
+          <span class="choice-label">{{ opt }}</span>
         </button>
       }
     </div>
   }
 
   @if (picked() !== null) {
-    <div class="feedback cyber-feedback" [class.good]="isRight()" aria-live="polite">
-      <div class="feedback-status">
-        <span class="feedback-icon">{{ isRight() ? '⚡' : '🛡️' }}</span>
-        <p class="feedback-msg">{{ message() }}</p>
+    <div class="feedback romantic-feedback-drawer" [class.good]="isRight()" aria-live="polite">
+      <div class="feedback-indicator">
+        <span class="feedback-symbol">{{ isRight() ? '✨' : '🌷' }}</span>
+        <div class="feedback-text-wrap">
+          <h4 class="feedback-title">{{ message() }}</h4>
+          @if (current().kind === 'typing') {
+            <p class="answer-reveal" data-clarity-unmask="True">შენ აკრიფე: <strong>{{ picked() }}</strong></p>
+          }
+          @if (!isRight()) {
+            <p class="answer-reveal correct-reveal">სწორი პასუხი: <strong>{{ current().answer }}</strong></p>
+          }
+        </div>
       </div>
-
-      @if (current().kind === 'typing') {
-        <p class="answer-reveal" data-clarity-unmask="True">You wrote: <strong>{{ picked() }}</strong></p>
-      }
-      @if (!isRight()) {
-        <p class="answer-reveal correct-reveal">Correct answer: <strong>{{ current().answer }}</strong></p>
-      }
 
       @if (isRight()) {
         <div class="confetti" aria-hidden="true">
           @for (s of sparks; track s) {
-            <i [style.--i]="s">{{ ['⚡', '✨', '💎', '🔥', '⭐'][s % 5] }}</i>
+            <i [style.--i]="s">{{ ['✨', '🌸', '💫', '💖', '⭐'][s % 5] }}</i>
           }
         </div>
       }
 
-      <button type="button" class="btn-action next-btn" (click)="next()">
-        {{ index() + 1 >= questions().length ? 'FINISH MISSION 🏆' : 'NEXT STAGE ➜' }}
+      <button type="button" class="studio-primary-btn next-btn" (click)="next()">
+        <span>{{ index() + 1 >= questions().length ? 'შედეგების ნახვა ♡' : 'შემდეგი შეკითხვა ♡' }}</span>
       </button>
     </div>
   }
